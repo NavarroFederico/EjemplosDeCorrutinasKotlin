@@ -18,27 +18,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 //Corriendo corrutina
-/*        val time = measureTimeMillis {
-            runBlocking {
-                for (i in 1..100_000) {
-                    launch {
-                        delay(10_000L)
-                    }
-                }
-            }
+        Log.d(TAG, "Corriendo código 2 en el subproceso : ${Thread.currentThread().name}")
+        Log.d(TAG, "Hola, ")
+        GlobalScope.launch {
+            Log.d(TAG, "Corriendo corrutina en el subproceso: ${Thread.currentThread().name}")
+            delay(5000L)
+            Log.d(TAG, "Mundo")
         }
-       Log.d(TAG,"tiempo transcurrido : $time en ${Thread.currentThread().name}")
-*/
-    val timeHiloMain = measureTimeMillis {
-        for ( i in 1..10_000){
-            Thread {
-                Thread.sleep(1)
-            }.run()
-            }
-        }
-    Log.d(TAG,"tiempo transcurrido : $timeHiloMain en ${Thread.currentThread().name}")
-
+        Log.d(TAG, "Federico en : ${Thread.currentThread().name}")
     }
 
 }
+
 
