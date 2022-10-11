@@ -5,46 +5,30 @@ import android.os.Bundle
 import android.provider.Settings.Global
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.flow
-import kotlin.concurrent.thread
-import kotlin.system.measureTimeMillis
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private val TAG: String = "ActividadPrincipal"
+    private val TAG: String = ("ActividadPrincipal")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.d(TAG, "Funcion main fue iniciada  ${Thread.currentThread().name}")
 
+        val job = GlobalScope.launch {
+            Log.d(TAG, "Corrutina Iniciada")
+            delay(5000)
+            Log.d(TAG, "Corrutina Finalizada")
 
-
-        btn_ejecutar.setOnClickListener {
-            GlobalScope.launch(Dispatchers.Main) {
-
-                Log.d(TAG, "Corrutina 1 Iniciada ${Thread.currentThread().name}")
-                obtenerInfoDeInternet()
-                Log.d(TAG, "Corrutina 1 Finalizada")
-            }
-            GlobalScope.launch(Dispatchers.Main) {
-                Log.d(TAG, "Corrutina 2 Iniciada ${Thread.currentThread().name}")
-                textView.setText("esperando")
-                Log.d(TAG, "Corrutina 2 Finalizada")
-            }
         }
 
-        // Log.d(TAG,respuesta)
+        btn_ejecutar.setOnClickListener {
+            job.cancel()
+            Log.d(TAG, "Corrutina cancelada")
 
-    }
+        }
 
 
-    suspend fun obtenerInfoDeInternet(): String {
-        Log.d(TAG,"Obteniendo respuesta ${Thread.currentThread().name}")
-        delay(5000L)
-        textView.setText("Respuesta De Internet")
-        return "Respuesta de Internet"
     }
 }
-
-
