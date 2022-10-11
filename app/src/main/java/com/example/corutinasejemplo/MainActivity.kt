@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
+import kotlin.system.measureTimeMillis
 
 class MainActivity : AppCompatActivity() {
     private val TAG: String = "ActividadPrincipal"
@@ -20,23 +21,29 @@ class MainActivity : AppCompatActivity() {
         btn_ejecutar.setOnClickListener {
 
             GlobalScope.launch(Dispatchers.IO) {
-                val respuesta = obtenerInfoDeInternet()
-                withContext(Dispatchers.Main) {
-                    Log.d(TAG, "Se muestra la respuesta en text vie pantalla ${Thread.currentThread().name}")
-                textView.text = respuesta
-                }
-            }
-        }
-        // Log.d(TAG,respuesta)
+                val tiempo = measureTimeMillis {
+                    val job1 = async { obtenerInfoDeInternet(1) }
+                    val job2 = async { obtenerInfoDeInternet(2) }
 
+                    Log.d(TAG, job1.await())
+                    Log.d(TAG, job2.await())
+
+                    withContext(Dispatchers.Main) {
+                        Log.d(TAG,"Se muestra la respuesta en text vie pantalla ${Thread.currentThread().name}")
+                        textView.text =  job1.await()+job2.await() +"Ambas respuestas en un tiempo de "
+                    }
+                }
+                Log.d(TAG,"$tiempo")//estaria bueno enviar esto al textview
+            }
+
+        }
     }
 
-
-    suspend fun obtenerInfoDeInternet(): String {
+    suspend fun obtenerInfoDeInternet(num: Int): String {
         Log.d(TAG, "Obteniendo respuesta ${Thread.currentThread().name}")
         delay(3000L)
-
-        return "Respuesta de Internet"
+        Log.d(TAG, "Se obtuvo ${Thread.currentThread().name}")
+        return "Respuesta de Internet $num"
 
     }
 }
